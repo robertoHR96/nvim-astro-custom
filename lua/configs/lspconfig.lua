@@ -77,6 +77,12 @@ lspconfig.jsonls.setup({
   capabilities = capabilities,
 })
 
+-- Servidor Java
+lspconfig.jdtls.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
 -- Configuración automática para otros servidores
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("UserLspConfig", {}),

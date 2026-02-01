@@ -14,7 +14,7 @@ return {
       require("mason-lspconfig").setup({
         ensure_installed = {
           "lua_ls", "pyright", "tsserver", "rust_analyzer", "gopls",
-          "html", "cssls", "jsonls", "yamlls", "bashls"
+          "html", "cssls", "jsonls", "yamlls", "bashls", "jdtls"
         },
         automatic_installation = true,
       })

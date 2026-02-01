@@ -14,6 +14,7 @@ Antes de instalar, asegúrate de tener lo siguiente:
     *   `python`: Para `pyright`, `black`.
     *   `go`: Para `gopls`.
     *   `rustup`: Para `rust_analyzer`.
+    *   Se requiere un JDK para `jdtls` (Java).
 
 ## Instalación
 
@@ -40,110 +41,98 @@ Sigue estos pasos para instalar la configuración:
     ```
     La primera vez que inicies Neovim, [lazy.nvim](https://github.com/folke/lazy.nvim) se instalará automáticamente y sincronizará todos los plugins definidos en la configuración.
 
-## Estructura del Repositorio
-
-La configuración está organizada de manera modular para facilitar su mantenimiento:
-
--   `init.lua`: El punto de entrada principal. Carga `lazy.nvim`, los plugins, y el resto de la configuración. También contiene personalizaciones clave como el layout de inicio y el sistema de salida con confirmación.
--   `lua/chadrc.lua`: Archivo de configuración de la UI de AstroNvim. Aquí se define el tema (`gatekeeper`).
--   `lua/mappings.lua`: Define los atajos de teclado globales.
--   `lua/options.lua`: Establece las opciones base de Neovim (números de línea, sangrado, etc.).
--   `lua/plugins/init.lua`: Define la lista de plugins personalizados que se añaden a la base de AstroNvim.
--   `lua/configs/`: Contiene la configuración específica para ciertos plugins:
-    -   `lspconfig.lua`: Configuración de los servidores de lenguaje (LSP).
-    -   `cmp.lua`: Personalización del menú de autocompletado.
-    -   `conform.lua`: Define los formateadores de código por tipo de archivo.
-
-## Características Principales
-
--   **Layout de Inicio Automático**: Al iniciar `nvim`, se abre automáticamente `NvimTree` a la izquierda y una terminal flotante en la parte inferior, dejando el foco listo en una ventana de edición.
--   **Salida Segura con Confirmación**: Al intentar salir con `:q` o `:qa`, un menú de confirmación aparecerá si hay archivos sin guardar, evitando pérdidas accidentales.
--   **Gestión de LSPs con Mason**: Los servidores de lenguaje se instalan y gestionan automáticamente, proporcionando autocompletado, diagnósticos y formato para múltiples lenguajes.
--   **Atajos de Teclado Intuitivos**: Mapeos diseñados para una navegación fluida entre ventanas, terminal y el explorador de archivos.
--   **Formateo al Guardar**: Configurado a través de `conform.nvim` para formatear el código automáticamente.
-
 ## Atajos de Teclado
 
-La tecla `Líder` está mapeada a la `Barra espaciadora`.
+La tecla `Líder` está mapeada a la **Barra espaciadora**.
 
-### Navegación General y Ventanas
+> **Nota Importante**: La gran mayoría de estos atajos son universales y funcionarán igual en Windows, macOS y Linux. Las diferencias o problemas suelen venir del programa "Terminal" que utilices, no de la configuración de Neovim. Consulta las **Notas de Compatibilidad** al final de esta sección.
 
-| Atajo             | Acción                                                                  |
-| ----------------- | ----------------------------------------------------------------------- |
-| `<Líder> t`       | Muestra/Oculta la terminal flotante.                                    |
-| `<Shift> + H/J/K/L` | Mueve el foco entre ventanas (izquierda/abajo/arriba/derecha).            |
-| `<Shift> + Flechas` | Redimensiona la ventana actual.                                         |
-| `H/J/K/L` (Normal)  | Mueve el foco entre el editor y la terminal.                            |
-| `H/J/K/L` (Terminal)| Vuelve al modo normal y mueve el foco a la ventana adyacente.           |
+### Navegación y Gestión de Ventanas
+
+| Atajo                 | Modo(s)      | Acción                                                       |
+| --------------------- | ------------ | ------------------------------------------------------------ |
+| `<Shift> + H/J/K/L`   | Normal       | Mover el foco entre ventanas (izquierda/abajo/arriba/derecha). |
+| `H/J/K/L`             | Normal       | Mover foco al editor/terminal adyacente (y entra en modo inserción si es terminal). |
+| `H/J/K/L`             | Terminal     | Salir de modo terminal y mover el foco a la ventana adyacente. |
+| `<Shift> + Flechas`   | Normal       | Redimensionar la ventana actual.                             |
+| `<Líder> t`           | Normal, Terminal | Muestra/Oculta la terminal flotante.                         |
+
+### Edición de Código
+
+| Atajo       | Modo(s)      | Acción                                                       |
+| ----------- | ------------ | ------------------------------------------------------------ |
+| `kj` o `KJ` | Inserción    | Salir del modo inserción (alternativa a `<Esc>`).            |
+| `;`         | Normal       | Entrar en modo de comandos (reemplaza a `:`).                |
+| `<C-v>`     | Normal, Inserción | Pegar desde el portapapeles del sistema.                     |
+| `<C-c>`     | Visual       | Copiar la selección al portapapeles del sistema.             |
+| `<Líder> f` | Normal, Visual | Formatear el archivo completo o la selección actual.         |
+
+### Autocompletado (nvim-cmp)
+
+| Atajo       | Modo      | Acción                                  |
+| ----------- | --------- | --------------------------------------- |
+| `<C-Space>` | Inserción | Activar el menú de autocompletado.      |
+| `<CR>`      | Inserción | Confirmar la selección.                 |
+| `<Tab>`     | Inserción | Seleccionar el siguiente ítem del menú. |
+| `<S-Tab>`   | Inserción | Seleccionar el ítem anterior del menú.  |
+| `<C-e>`     | Inserción | Abortar el autocompletado.              |
+| `<C-b>`/`<C-f>` | Inserción | Desplazarse por la documentación (scroll). |
+
+### Funciones de LSP (Language Server)
+
+| Atajo        | Modo   | Acción                                |
+| ------------ | ------ | ------------------------------------- |
+| `gd`         | Normal | Ir a la definición de lo que está bajo el cursor. |
+| `K`          | Normal | Mostrar documentación (hover).        |
+| `gi`         | Normal | Ir a la implementación.               |
+| `gr`         | Normal | Mostrar referencias del símbolo.       |
+| `<Líder> rn` | Normal | Renombrar el símbolo en todo el proyecto. |
+| `<Líder> ca` | Normal | Ver acciones de código disponibles (ej. "extraer a función"). |
 
 ### Gestión de Archivos (NvimTree)
 
-*Estos atajos solo funcionan con el foco en NvimTree.*
+*Estos atajos solo funcionan con el foco en el explorador de archivos NvimTree.*
 
-| Atajo | Acción                        |
-| ----- | ----------------------------- |
-| `L`   | Abrir archivo o expandir carpeta. |
-| `H`   | Volver a la carpeta padre.    |
-| `J/K` | Moverse entre archivos.       |
-| `a`   | Crear archivo/carpeta.        |
-| `r`   | Renombrar.                    |
-| `d`   | Eliminar.                     |
-| `x`   | Cortar.                       |
-| `y`   | Copiar.                       |
-| `p`   | Pegar.                        |
+| Atajo | Modo   | Acción                        |
+| ----- | ------ | ----------------------------- |
+| `L` o `<CR>` | Normal | Abrir archivo o expandir carpeta. |
+| `H`   | Normal | Volver a la carpeta padre.    |
+| `J/K` | Normal | Moverse entre archivos.       |
+| `a`   | Normal | Crear archivo/carpeta.        |
+| `r`   | Normal | Renombrar.                    |
+| `d`   | Normal | Eliminar.                     |
+| `x`   | Normal | Cortar.                       |
+| `y`   | Normal | Copiar.                       |
+| `p`   | Normal | Pegar.                        |
 
-### Edición y LSP
+### Salida de Neovim
 
-| Atajo          | Acción                                       |
-| -------------- | -------------------------------------------- |
-| `kj` / `KJ`    | Salir del modo inserción (alternativa a `Esc`). |
-| `<Líder> f`    | Formatear el archivo o la selección actual.  |
-| `gd`           | Ir a la definición.                          |
-| `K`            | Mostrar documentación (hover).               |
-| `<Líder> ca`   | Ver acciones de código disponibles.          |
-| `<Líder> rn`   | Renombrar símbolo.                           |
-| `<C-c>` (Visual) | Copiar al portapapeles del sistema.          |
-| `<C-v>`        | Pegar desde el portapapeles del sistema.     |
+| Atajo        | Modo   | Acción                                     |
+| ------------ | ------ | ------------------------------------------ |
+| `<Líder> q`  | Normal | Salir de la ventana actual (con confirmación si hay cambios). |
+| `<Líder> qa` | Normal | Salir de Neovim (con confirmación si hay cambios). |
 
-### Salida
+---
 
-| Atajo       | Comando     | Acción                                     |
-| ----------- | ----------- | ------------------------------------------ |
-| `<Líder> q` | `:Q` / `:q` | Salir de la ventana actual (con confirmación). |
-| `<Líder> qa`| `:Qa` / `:qa`| Salir de Neovim (con confirmación).        |
+### Notas sobre Compatibilidad entre Sistemas Operativos
 
-## Plugins y Configuración
+Tu configuración de Neovim es universal. Si un atajo no funciona, casi siempre el problema está en el **programa de Terminal** que usas, que "intercepta" la combinación de teclas antes de que llegue a Neovim.
 
-### Plugins Añadidos
+Aquí tienes los casos más comunes y cómo solucionarlos:
 
--   **[mason.nvim](https://github.com/williamboman/mason.nvim)**: Para gestionar LSPs, formateadores y linters.
--   **[mason-lspconfig.nvim](https://github.com/williamboman/mason-lspconfig.nvim)**: Puente entre Mason y `nvim-lspconfig`.
--   **[nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)**: Configuración base para los LSPs.
--   **[nvim-cmp](https://github.com/hrsh7th/nvim-cmp)**: Motor de autocompletado.
--   **[LuaSnip](https://github.com/L3MON4D3/LuaSnip)**: Motor de snippets.
--   **[null-ls.nvim](https://github.com/jose-elias-alvarez/null-ls.nvim)**: Para integrar formateadores y linters que no son LSPs (reemplazado en parte por `conform.nvim`).
--   **[Comment.nvim](https://github.com/numToStr/Comment.nvim)**: Para comentar código fácilmente (`gcc`, `gc`).
--   **[gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim)**: Muestra indicadores de cambios de Git en el lateral.
+-   **Atajo `<C-Space>` (Autocompletado)**:
+    -   **Problema**: Muchos terminales en Linux y macOS no envían una señal única para `<C-Space>`, por lo que Neovim no lo detecta. En Windows, a veces está reservado para cambiar el idioma del teclado.
+    -   **Solución**: Si no te funciona, puedes cambiarlo en `lua/configs/cmp.lua`. Una alternativa común y universal es `<C-e>` (aunque en esta config se usa para abortar) o mapear otra combinación que te sea cómoda.
 
-### Servidores de Lenguaje (LSP)
+-   **Atajos con `Shift + Flechas` (Redimensionar ventanas)**:
+    -   **Problema**: En algunos terminales de Linux, esto puede estar asignado a otra función.
+    -   **Solución**: Generalmente funciona bien, pero si falla, deberás buscar en las preferencias de tu terminal cómo deshabilitar ese atajo específico para que la combinación llegue a Neovim.
 
-Los siguientes LSPs están configurados para instalarse automáticamente a través de Mason:
+-   **Atajos con la tecla `Alt` (No usados en esta config)**:
+    -   **Contexto**: Esta configuración no usa la tecla `Alt` (`<A-...>`) para evitar problemas, pero es bueno saberlo.
+    -   **Problema**: En **macOS**, la tecla `Option` (equivalente a `Alt`) se usa para escribir caracteres especiales (ej. `Option + n` = `˜`). En **Linux**, a veces se usa para mover las ventanas del sistema operativo.
+    -   **Solución**: Si en el futuro añades un atajo con `Alt`, en macOS y algunos terminales de Linux necesitarás configurar el terminal para que envíe la tecla `Option`/`Alt` como "Meta" o "Esc+".
 
--   `lua_ls`: Para Lua.
--   `pyright`: Para Python.
--   `tsserver`: Para TypeScript/JavaScript.
--   `rust_analyzer`: Para Rust.
--   `gopls`: Para Go.
--   `html`: Para HTML.
--   `cssls`: Para CSS.
--   `jsonls`: Para JSON.
--   `yamlls`: Para YAML.
--   `bashls`: Para Bash.
-
-### Formateadores
-
-La configuración de `conform.nvim` está preparada para usar:
-
--   `stylua`: Para Lua.
--   `black`: Para Python.
--   `prettier`: Para web (HTML, CSS, JS, etc.).
+-   **Atajos `<C-c>` y `<C-v>` (Copiar/Pegar)**:
+    -   **Contexto**: Esta configuración los remapea para usar el portapapeles del sistema de forma integrada en Neovim.
+    -   **Comportamiento**: Esto es intencional y funciona en todos los SO, pero anula el comportamiento por defecto de algunos terminales (donde `<C-c>` cancela un proceso). Dentro de Neovim, esto no es un problema.
