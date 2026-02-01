@@ -1,47 +1,166 @@
-# Mi Configuración Personal de AstroNvim
+# Mi Configuración Personal de AstroNvim: Una Guía Completa
 
-Este repositorio contiene mi configuración personal para [AstroNvim](https://astronvim.com/), diseñada para ser modular, eficiente y fácil de replicar en cualquier máquina. El objetivo es tener un entorno de desarrollo listo para usar con todas mis herramientas y atajos preferidos.
+Este repositorio contiene mi configuración personal de Neovim, construida sobre la base de [AstroNvim](https://astronvim.com/). El objetivo es crear un entorno de desarrollo moderno, portátil y altamente productivo que se sienta como un IDE completo pero manteniendo la velocidad y eficiencia de Vim.
 
-## Requisitos Previos
+## La Filosofía de esta Configuración
 
-Antes de instalar, asegúrate de tener lo siguiente:
+Esta no es una configuración minimalista. El enfoque es "baterías incluidas", buscando un equilibrio entre funcionalidades avanzadas y rendimiento. La filosofía se basa en tres pilares:
 
-1.  **Neovim**: Versión `0.9.0` o superior.
-2.  **Git**: Para clonar el repositorio y gestionar los plugins.
-3.  **Nerd Font**: Necesaria para que los iconos se muestren correctamente. Recomiendo [FiraCode Nerd Font](https://www.nerdfonts.com/font-downloads).
-4.  **Dependencias de LSP y Formateadores**:
-    *   `node`/`npm`: Para `tsserver`, `prettier`, `jsonls`, etc.
-    *   `python`: Para `pyright`, `black`.
-    *   `go`: Para `gopls`.
-    *   `rustup`: Para `rust_analyzer`.
-    *   Se requiere un JDK para `jdtls` (Java).
+1.  **Eficiencia del Flujo de Trabajo**: La configuración está diseñada para minimizar la fricción. Tareas comunes como navegar entre el código y la terminal, gestionar archivos, formatear y obtener ayuda del LSP deben ser instantáneas.
+2.  **Inteligencia del Entorno (IDE-like)**: Gracias a la integración profunda con LSPs (Language Server Protocol) a través de Mason, el editor "entiende" el código, proporcionando autocompletado, diagnósticos, definiciones y refactorización de forma nativa.
+3.  **Seguridad y Consistencia**: Características como la "salida con confirmación" evitan la pérdida de trabajo, mientras que los formateadores automáticos aseguran un estilo de código consistente en todos los proyectos.
 
-## Instalación
+## El Flujo de Trabajo Diario
 
-Sigue estos pasos para instalar la configuración:
+Esta configuración está pensada para ser usada de una manera específica para maximizar la productividad.
 
-1.  **Haz una copia de seguridad de tu configuración actual de Neovim (si la tienes):**
-    ```bash
-    # Mueve tu configuración actual a una carpeta de respaldo
-    mv ~/.config/nvim ~/.config/nvim.bak
-    mv ~/.local/share/nvim ~/.local/share/nvim.bak
-    mv ~/.local/state/nvim ~/.local/state/nvim.bak
-    mv ~/.cache/nvim ~/.cache/nvim.bak
+### Al Iniciar Neovim
+
+Al ejecutar `nvim`, el entorno se prepara automáticamente para una sesión de codificación:
+-   A la izquierda, se abre el explorador de archivos **NvimTree**.
+-   A la derecha, el cursor se posiciona en una ventana de editor vacía, lista para trabajar.
+-   En la parte inferior, se despliega una **terminal flotante**, ideal para ejecutar comandos de Git, scripts o servidores de desarrollo.
+-   El foco inicial está en la ventana del editor, permitiéndote empezar a escribir o abrir un archivo inmediatamente.
+
+### Navegación: El Corazón de la Configuración
+
+La navegación entre ventanas es una de las personalizaciones más importantes:
+-   Usa **`H`, `J`, `K`, `L`** (sin Shift) para moverte de forma inteligente entre el editor y la terminal. Si te mueves hacia la terminal, entrarás en modo inserción automáticamente. Si estás en la terminal, usar estas teclas te devolverá al modo normal y te moverá a la ventana del editor.
+-   Usa **`<Shift> + H/J/K/L`** para mover el foco entre cualquier división de ventana, siguiendo la lógica de Vim (izquierda, abajo, arriba, derecha).
+
+### Edición y Programación
+
+-   **Autocompletado Inteligente**: Simplemente empieza a escribir. `nvim-cmp` te ofrecerá sugerencias del LSP, los buffers abiertos y snippets. Usa `<Tab>` y `<S-Tab>` para navegar y `<CR>` para confirmar.
+-   **Ayuda del LSP**: Usa `gd` para saltar a la definición, `K` para ver la documentación de una función o tipo, y `<Líder> ca` para ver acciones de código contextuales (como "extraer a una variable").
+-   **Formateo**: Olvídate del formato manual. Usa `<Líder> f` para formatear el archivo actual según las reglas de `prettier`, `stylua`, etc.
+-   **Gestión de Archivos**: Realiza todas las operaciones de archivos (crear, renombrar, eliminar) desde NvimTree usando los atajos intuitivos (`a`, `r`, `d`).
+
+---
+
+## Instalación Detallada
+
+#### Paso 1: Requisitos Previos
+
+Asegúrate de tener todo lo necesario.
+
+-   **Neovim**: Versión `0.9.0` o superior.
+-   **Git**: Esencial para clonar y para que `lazy.nvim` gestione los plugins.
+-   **Nerd Font**: Para que los iconos de la UI y los plugins se vean correctamente. Recomiendo [FiraCode Nerd Font](https://www.nerdfonts.com/font-downloads).
+-   **Herramientas de Build y Runtimes**: Los LSPs y formateadores son programas externos. Necesitarás los runtimes de los lenguajes que uses.
+    -   `node` y `npm`: Para `tsserver`, `prettier`, `jsonls`, etc.
+    -   `python`: Para `pyright`, `black`.
+    -   `go`: Para `gopls`.
+    -   `rustup`: Para `rust_analyzer`.
+    -   Un **JDK** (Java Development Kit): Para `jdtls`.
+
+#### Paso 2: Copia de Seguridad (Recomendado)
+
+```bash
+# Mueve tu configuración actual a una carpeta de respaldo
+mv ~/.config/nvim ~/.config/nvim.bak
+```
+
+#### Paso 3: Clonación de la Configuración
+
+```bash
+git clone https://github.com/tu-usuario/tu-repositorio.git ~/.config/nvim
+```
+*(No olvides reemplazar la URL por la de tu repositorio)*
+
+#### Paso 4: Primer Inicio - ¡Paciencia!
+
+La primera vez que ejecutes `nvim`, ocurrirán varias cosas automáticamente:
+1.  **Instalación de `lazy.nvim`**: El gestor de plugins se auto-instalará.
+2.  **Sincronización de Plugins**: `lazy.nvim` leerá tu configuración y procederá a descargar e instalar todos los plugins. Verás su interfaz en pantalla.
+3.  **Instalación de LSPs y Formateadores**: Una vez los plugins estén instalados, `mason.nvim` empezará a descargar e instalar todos los LSPs y herramientas definidas en `lua/plugins/init.lua`. Esto puede tardar varios minutos y requiere conexión a internet.
+
+> Puedes ver el progreso de Mason ejecutando el comando `:Mason`.
+
+---
+
+## Anatomía de la Configuración
+
+Entender la estructura de archivos es clave para poder modificar y mantener la configuración.
+
+-   `init.lua` (**El Cerebro**): Es el punto de entrada. Se encarga de:
+    -   Establecer opciones globales de Neovim.
+    -   Cargar el gestor de plugins `lazy.nvim`.
+    -   Definir la lógica de "salida con confirmación".
+    -   Orquestar el layout de inicio (NvimTree + Terminal).
+    -   Cargar el resto de archivos de configuración en el orden correcto.
+
+-   `lua/chadrc.lua` (**El Estilo**): Este es el archivo estándar de AstroNvim para configurar la **interfaz de usuario (UI)**. Aquí es donde se define el tema (`gatekeeper`), las fuentes, y otros aspectos visuales.
+
+-   `lua/plugins/init.lua` (**La Caja de Herramientas**): Aquí se define la lista de todos los plugins *adicionales* que no vienen con AstroNvim base. Cada entrada en la tabla `return` es un plugin. Algunos de los más importantes que has añadido son:
+    -   `mason.nvim`: Un gestor universal para instalar y gestionar LSPs, linters y formateadores.
+    -   `mason-lspconfig.nvim`: Un puente que le dice a `lspconfig` que use los servidores que Mason instala.
+    -   `nvim-cmp`: El motor de autocompletado.
+    -   `null-ls.nvim` / `conform.nvim`: Herramientas para registrar y ejecutar formateadores de código.
+
+-   `lua/configs/` (**La Sala de Control**): Este directorio contiene los archivos que configuran los plugins definidos en `lua/plugins/init.lua`.
+    -   `lspconfig.lua`: Contiene la configuración específica para cada servidor de lenguaje (LSP).
+    -   `cmp.lua`: Define el comportamiento del menú de autocompletado, sus atajos y sus fuentes.
+    -   `conform.lua`: Especifica qué formateador (`prettier`, `stylua`, etc.) se debe usar para cada tipo de archivo.
+
+-   `lua/mappings.lua` (**El Mapa de Atajos**): Aquí se definen tus atajos de teclado personalizados y globales.
+
+---
+
+## Personalización
+
+Esta configuración es un punto de partida. Aquí tienes cómo puedes adaptarla a tus necesidades.
+
+#### Cambiar el Tema
+
+1.  Encuentra un tema compatible con `base46` (la mayoría de temas populares lo son).
+2.  Edita `lua/chadrc.lua` y cambia el valor de `M.base46.theme`. Por ejemplo:
+    ```lua
+    M.base46.theme = "catppuccin"
     ```
 
-2.  **Clona este repositorio en tu directorio de configuración de Neovim:**
-    ```bash
-    git clone https://github.com/tu-usuario/tu-repositorio.git ~/.config/nvim
-    ```
-    *(Reemplaza `tu-usuario/tu-repositorio` con la URL de tu repositorio)*
+#### Añadir un Nuevo Plugin
 
-3.  **Inicia Neovim:**
-    ```bash
-    nvim
+1.  Abre `lua/plugins/init.lua`.
+2.  Añade una nueva entrada a la tabla. Para un plugin de GitHub, sería:
+    ```lua
+    {
+      "autor/nombre-del-plugin",
+      -- Opcional: si el plugin necesita configuración
+      config = function()
+        require("nombre-del-plugin").setup({ ... })
+      end,
+    }
     ```
-    La primera vez que inicies Neovim, [lazy.nvim](https://github.com/folke/lazy.nvim) se instalará automáticamente y sincronizará todos los plugins definidos en la configuración.
+3.  Reinicia Neovim y `lazy.nvim` lo instalará.
 
-## Atajos de Teclado
+#### Añadir un Nuevo LSP o Formateador
+
+El proceso suele ser de dos pasos:
+
+1.  **Instalación**: Abre `lua/plugins/init.lua` y busca la sección de `mason-lspconfig`. Añade el nombre del paquete de Mason a la lista `ensure_installed`. Por ejemplo, para `dockerls`:
+    ```lua
+    ensure_installed = { "lua_ls", "pyright", ..., "dockerls" },
+    ```
+2.  **Configuración**:
+    -   **Para un LSP**: Abre `lua/configs/lspconfig.lua` y añade su `setup`, siguiendo el patrón de los demás.
+        ```lua
+        lspconfig.dockerls.setup({
+          on_attach = on_attach,
+          capabilities = capabilities,
+        })
+        ```
+    -   **Para un Formateador**: Abre `lua/configs/conform.lua` y añade una entrada en `formatters_by_ft`.
+        ```lua
+        formatters_by_ft = {
+          ...,
+          dockerfile = { "hadolint" }, -- Suponiendo que 'hadolint' es el formateador
+        },
+        ```
+
+---
+## Atajos de Teclado (Guía Completa)
+
+*(Esta sección se mantiene igual que la versión anterior, ya que es exhaustiva)*
 
 La tecla `Líder` está mapeada a la **Barra espaciadora**.
 
